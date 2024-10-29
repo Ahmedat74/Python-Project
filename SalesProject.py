@@ -13,7 +13,7 @@ from datetime import datetime # => to convert date string to datetime object
 import pandas as pd # => for data manipulation and analysis
 
 #function to download data from JSON string
-def download_data(json_str):
+def DownloadData(json_str):
         try:
                 data = json.loads(json_str)
                 
@@ -29,7 +29,7 @@ def download_data(json_str):
 #        return new_data_frame
 
 #function to convert string date to datetime object        
-def Convert_into_datetime(data_frame, date_column):
+def ConvertIntoDatetime(data_frame, date_column):
         try:
                 data_frame[date_column] = pd.to_datetime(data_frame[date_column])
                 
@@ -38,7 +38,7 @@ def Convert_into_datetime(data_frame, date_column):
                 raise ValueError(F"{date_column} must be a valid column name in the data frame")
         
 #function to get sales for a single item in a given date range                
-def get_sales_for_item(data_frame,date_column,id_column_name, product_id,start_date, end_date, target_colunm):
+def GetSalesForItem(data_frame,date_column,id_column_name, product_id,start_date, end_date, target_colunm):
         
         filterd_data = data_frame[(data_frame[date_column] >= start_date) & (data_frame[date_column] <= end_date)]  
         
@@ -51,7 +51,7 @@ def get_sales_for_item(data_frame,date_column,id_column_name, product_id,start_d
         
 #function to get sales for multiple items in a given date range
             
-def get_sales_for_list_items(date_frame,date_column,id_colunm_name, product_ids, start_date, end_date, target_colunm):
+def GetSalesForListItems(date_frame,date_column,id_colunm_name, product_ids, start_date, end_date, target_colunm):
         
         filterd_data = date_frame[(date_frame[date_column] >= start_date) & (date_frame[date_column] <= end_date)]
         
@@ -60,7 +60,7 @@ def get_sales_for_list_items(date_frame,date_column,id_colunm_name, product_ids,
         return multiple_sales 
 
 #function  to get sales for a single branch in given date range                                           
-def get_sales_for_branchid(data_frame,date_column,branch_column_name,branch_id,start_date,end_date,target_colunm):
+def GetSalesForBranchId(data_frame,date_column,branch_column_name,branch_id,start_date,end_date,target_colunm):
         
         filterd_data = data_frame[(data_frame[date_column] >= start_date) & (data_frame[date_column] <= end_date)]
         
@@ -71,7 +71,7 @@ def get_sales_for_branchid(data_frame,date_column,branch_column_name,branch_id,s
         return total_branch_sales, branch_sales 
 
 #function to get total sales for a single item and a given branch in a given date range                                         
-def get_total_sales(data_frame,date_column,target_column,id_column_name,product_id,start_date,end_date,branch_column_name):
+def GetTotalSales(data_frame,date_column,target_column,id_column_name,product_id,start_date,end_date,branch_column_name):
         
         filtered_df = data_frame[(data_frame[date_column] >= start_date) & (data_frame[date_column] <= end_date) & (data_frame[id_column_name] == product_id)]
         
@@ -84,7 +84,7 @@ def get_total_sales(data_frame,date_column,target_column,id_column_name,product_
         return total_sales , sum_of_sales
  
 #function for checking sales movement for a single item in a given date range                                     
-def check_sales_movement(sum_of_sales):
+def checkSalesMovement(sum_of_sales):
         
         if(sum_of_sales > 0):
                 
@@ -101,7 +101,7 @@ def check_sales_movement(sum_of_sales):
                 or the sales and returns were equal for this item
                 """       
 #function  to check for no movements per day for a single item in a given date range                                             
-def check_for_no_movements_per_day(data_frame,date_column,product_id_column, product_id,date_day,target_column):
+def checkForNoMovementsperDay(data_frame,date_column,product_id_column, product_id,date_day,target_column):
         
         filtered_df = data_frame[(data_frame[date_column] == date_day) & (data_frame[product_id_column] == product_id)]
         
@@ -112,7 +112,7 @@ def check_for_no_movements_per_day(data_frame,date_column,product_id_column, pro
                 
                 return "There were sales or returns for this item on this day"
         
-def check_for_no_movements_per_days(data_frame, date_column, product_id_column, product_id, start_date, end_date, target_column):
+def checkForMovementsperRange(data_frame, date_column, product_id_column, product_id, start_date, end_date, target_column):
 
         filtered_df = data_frame[(data_frame[date_column] >= start_date) & (data_frame[date_column] <= end_date) & (data_frame[product_id_column] == product_id)]
 
@@ -127,7 +127,7 @@ def check_for_no_movements_per_days(data_frame, date_column, product_id_column, 
 
 #function to calculate outlier sales using Z-score                                            
                 
-def calculate_outlier_sales_Z_score(data_frame,product__id_column,product_id,date_column,target_column,start_date, end_date):
+def GetOutlierZscore(data_frame,product__id_column,product_id,date_column,target_column,start_date, end_date):
         
         filtered_df = data_frame[(data_frame[date_column] >= start_date) & (data_frame[date_column] <= end_date) & (data_frame[product__id_column] == product_id)]
         
@@ -141,7 +141,7 @@ def calculate_outlier_sales_Z_score(data_frame,product__id_column,product_id,dat
         
         return filtered_df
 #function to calculate outlier sales using IQR method(Interquartile Range)                                                                                        
-def calculate_outlier_sales_IQR(data_frame, product__id_column, product_id, date_column, target_column, start_date, end_date):
+def GetOutlierIQR(data_frame, product__id_column, product_id, date_column, target_column, start_date, end_date):
         
         filtered_df = data_frame[(data_frame[date_column] >= start_date) & (data_frame[date_column] <= end_date) & (data_frame[product__id_column] == product_id)]
         
