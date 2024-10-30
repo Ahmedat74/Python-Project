@@ -205,31 +205,4 @@ def GetOutlierIQR(json_str, product__id_column, product_id, date_column, target_
                 
 #this for Example usage
 if __name__ == "__main__":
-        json_str = """
-
-"""
-df = DownloadData(json_str)
-
-newdf = ConvertIntoDatetime(df, 'date')
-
-startdate = datetime(2022, 1, 1)
-
-enddate = datetime(2022, 12, 31)
-
-getsalesbyproductid = GetSalesForItem(newdf, 'date', 'product_id', 1, startdate, enddate, 'sales')
-
-getsalesbyproductid_list = GetSalesForListItems(newdf, 'date', 'product_id', [1, 2, 3], startdate, enddate, 'sales')
-
-getsalesbybranch_id = GetSalesForBranchId(newdf, 'date', 'branch_id', 1, startdate, enddate, 'sales')
-
-totalsales , sum_of_sales = GetTotalSales(newdf, 'date', 'sales', 'product_id', 1, startdate, enddate, 'branch_id')
-
-checksales = checkSalesMovement(sum_of_sales)
-
-checknosalesmovement = checkForNoMovementsperDay(newdf, 'date', 'product_id', 1, datetime(2022, 1, 1), 'sales')
-
-checkmovementrange = checkForMovementsperRange(newdf, 'date', 'product_id', 1, datetime(2022, 1, 1), datetime(2022, 12, 31), 'sales')
-
-outlierzscore = GetOutlierZscore(newdf, 'product_id', 1, 'date', 'sales', startdate, enddate)
-
-outlieriqr, iqr = GetOutlierIQR(newdf, 'product_id', 1, 'date', 'sales', startdate, enddate)
+        pass
