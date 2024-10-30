@@ -38,48 +38,71 @@ def ConvertIntoDatetime(data_frame, date_column):
                 raise ValueError(F"{date_column} must be a valid column name in the data frame")
         
 #function to get sales for a single item in a given date range                
-def GetSalesForItem(data_frame,date_column,id_column_name, product_id,start_date, end_date, target_colunm):
+def GetSalesForItem(json_str,date_column,id_column_name, product_id,start_date, end_date):
+        
+        data_frame = DownloadData(json_str)
+        
+        ConvertIntoDatetime(data_frame, date_column)
         
         filterd_data = data_frame[(data_frame[date_column] >= start_date) & (data_frame[date_column] <= end_date)]  
         
         single_sales = filterd_data[filterd_data[id_column_name] == product_id]
         
+        json_sales = single_sales.to_json()
         
-        return  single_sales
+        return  json_sales
 
         
 #function to get sales for multiple items in a given date range
             
-def GetSalesForListItems(date_frame,date_column,id_colunm_name, product_ids, start_date, end_date, target_colunm):
+def GetSalesForListItems(json_str,date_column,id_colunm_name, product_ids, start_date, end_date, target_colunm):
         
-        filterd_data = date_frame[(date_frame[date_column] >= start_date) & (date_frame[date_column] <= end_date)]
+        data_frame = DownloadData(json_str)
+        
+        ConvertIntoDatetime(data_frame, date_column)
+        
+        filterd_data = data_frame[(data_frame[date_column] >= start_date) & (data_frame[date_column] <= end_date)]
         
         multiple_sales = filterd_data[filterd_data[id_colunm_name].isin(product_ids)]
         
-        return multiple_sales 
+        json_sales = multiple_sales.to_json()
+        
+        return json_sales
 
 #function  to get sales for a single branch in given date range                                           
-def GetSalesForBranchId(data_frame,date_column,branch_column_name,branch_id,start_date,end_date,target_colunm):
+def GetSalesForBranchId(json_str,date_column,branch_column_name,branch_id,start_date,end_date,target_colunm):
+        
+        data_frame = DownloadData(json_str)
+        
+        ConvertIntoDatetime(data_frame, date_column)
         
         filterd_data = data_frame[(data_frame[date_column] >= start_date) & (data_frame[date_column] <= end_date)]
         
         branch_sales = filterd_data[filterd_data[branch_column_name] == branch_id]
         
+        json_sales = branch_sales.to_json()
 
-        return branch_sales 
+        return json_sales
 
 #function to get total sales for a single item and a given branch in a given date range                                         
-def GetTotalSales(data_frame,date_column,target_column,id_column_name,product_id,start_date,end_date,branch_column_name):
+def GetTotalSales(json_str,date_column,target_column,id_column_name,product_id,start_date,end_date,branch_column_name):
         
+        data_frame = DownloadData(json_str)
+
+        ConvertIntoDatetime(data_frame, date_column)
+
+        #filter data based on date range and product id
         filtered_df = data_frame[(data_frame[date_column] >= start_date) & (data_frame[date_column] <= end_date) & (data_frame[id_column_name] == product_id)]
-        
-        merge_date_branch = filtered_df.groupby([date_column,branch_column_name])
-                    
+
+        merge_date_branch = filtered_df.groupby([date_column, branch_column_name])
+
         total_sales = merge_date_branch[target_column].sum().reset_index()
         
         sum_of_sales = total_sales[target_column].sum()
-        
-        return total_sales , sum_of_sales
+
+        json_sales = total_sales.to_json()
+
+        return json_sales , sum_of_sales
  
 #function for checking sales movement for a single item in a given date range                                     
 def checkSalesMovement(sum_of_sales):
@@ -99,7 +122,11 @@ def checkSalesMovement(sum_of_sales):
                 or the sales and returns were equal for this item
                 """       
 #function  to check for no movements per day for a single item in a given date range                                             
-def checkForNoMovementsperDay(data_frame,date_column,product_id_column, product_id,date_day,target_column):
+def checkForNoMovementsperDay(json_str,date_column,product_id_column, product_id,date_day,target_column):
+        
+        data_frame = DownloadData(json_str)
+        
+        ConvertIntoDatetime(data_frame, date_column)
         
         filtered_df = data_frame[(data_frame[date_column] == date_day) & (data_frame[product_id_column] == product_id)]
         
@@ -110,7 +137,11 @@ def checkForNoMovementsperDay(data_frame,date_column,product_id_column, product_
                 
                 return "There were sales or returns for this item on this day"
         
-def checkForMovementsperRange(data_frame, date_column, product_id_column, product_id, start_date, end_date, target_column):
+def checkForMovementsperRange(json_str, date_column, product_id_column, product_id, start_date, end_date, target_column):
+
+        data_frame = DownloadData(json_str)
+
+        ConvertIntoDatetime(data_frame, date_column)
 
         filtered_df = data_frame[(data_frame[date_column] >= start_date) & (data_frame[date_column] <= end_date) & (data_frame[product_id_column] == product_id)]
 
@@ -125,7 +156,11 @@ def checkForMovementsperRange(data_frame, date_column, product_id_column, produc
 
 #function to calculate outlier sales using Z-score                                            
                 
-def GetOutlierZscore(data_frame,product__id_column,product_id,date_column,target_column,start_date, end_date):
+def GetOutlierZscore(json_str,product__id_column,product_id,date_column,target_column,start_date, end_date,num):
+        
+        data_frame = DownloadData(json_str)
+        
+        ConvertIntoDatetime(data_frame, date_column)
         
         filtered_df = data_frame[(data_frame[date_column] >= start_date) & (data_frame[date_column] <= end_date) & (data_frame[product__id_column] == product_id)]
         
@@ -135,11 +170,17 @@ def GetOutlierZscore(data_frame,product__id_column,product_id,date_column,target
         
         filtered_df['Z-score'] = (filtered_df[target_column] - mean_sales) / std_sales
         
-        filtered_df['Outlier'] = filtered_df['Z-score'].abs() > 3
+        filtered_df['Outlier'] = filtered_df['Z-score'].abs() > num
         
-        return filtered_df
+        json_Zscore = filtered_df.to_json()
+        
+        return json_Zscore
 #function to calculate outlier sales using IQR method(Interquartile Range)                                                                                        
-def GetOutlierIQR(data_frame, product__id_column, product_id, date_column, target_column, start_date, end_date):
+def GetOutlierIQR(json_str, product__id_column, product_id, date_column, target_column, start_date, end_date):
+        
+        data_frame = DownloadData(json_str)
+        
+        ConvertIntoDatetime(data_frame, date_column)
         
         filtered_df = data_frame[(data_frame[date_column] >= start_date) & (data_frame[date_column] <= end_date) & (data_frame[product__id_column] == product_id)]
         
@@ -155,9 +196,11 @@ def GetOutlierIQR(data_frame, product__id_column, product_id, date_column, targe
         upper_bound = Q3 + 1.5 * IQR
         
         filtered_df['Outlier'] = (filtered_df[target_column] > upper_bound)
+        
+        json_Iqr = filtered_df.to_json()
     
 
-        return filtered_df , IQR
+        return json_Iqr , IQR
 
                 
 #this for Example usage
